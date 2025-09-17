@@ -1,0 +1,41 @@
+services:
+  setup:
+    build: .
+    image: ai-images-app:latest
+    environment:
+    - NODE_ENV=${NODE_ENV:-production}
+    - API_KEY=${API_KEY:-change-me}
+    - JWT_SECRET=${JWT_SECRET:-change-me}
+    - NANO_GPT_BASE_URL=${NANO_GPT_BASE_URL:-https://nano-gpt.com}
+    - COOKIE_SECURE=${COOKIE_SECURE:-false}
+    - DB_FILE_NAME=${DB_FILE_NAME:-file:/app/data/app.db}
+    - GENERATED_DIR=${GENERATED_DIR:-/app/data/generated}
+    - BACEKND_PORT=${BACEKND_PORT:-3000}
+    - PORT=${PORT:-3000}
+    volumes:
+    - ./docker-volume:/app/data
+    command:
+    - ./node_modules/.bin/tsx
+    - ./scripts/setup.ts
+    working_dir: /app/apps/backend
+  app:
+    build: .
+    image: ai-images-app:latest
+    environment:
+    - NODE_ENV=${NODE_ENV:-production}
+    - API_KEY=${API_KEY:-change-me}
+    - JWT_SECRET=${JWT_SECRET:-change-me}
+    - NANO_GPT_BASE_URL=${NANO_GPT_BASE_URL:-https://nano-gpt.com}
+    - COOKIE_SECURE=${COOKIE_SECURE:-false}
+    - DB_FILE_NAME=${DB_FILE_NAME:-file:/app/data/app.db}
+    - GENERATED_DIR=${GENERATED_DIR:-/app/data/generated}
+    - BACEKND_PORT=${BACEKND_PORT:-3000}
+    - PORT=${PORT:-3000}
+    volumes:
+    - ./docker-volume:/app/data
+    ports:
+    - ${HOST_PORT:-8080}:${PORT:-3000}
+    restart: unless-stopped
+    depends_on:
+      setup:
+        condition: service_completed_successfully

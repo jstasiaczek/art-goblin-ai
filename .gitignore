@@ -1,0 +1,45 @@
+# Node.js
+node_modules/
+.pnpm/
+.pnpm-debug.log
+
+# Vite cache
+dist/
+.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# Env files
+.env
+.env.*.local
+.env.production
+.env.development
+
+# Editor settings
+.vscode/
+.idea/
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local CLI
+shadcn-ui.config.ts
+
+# Optional: Tailwind's JIT cache
+.tailwind.config.js.backup
+
+# Optional: Playwright or Vitest cache (if added)
+coverage/
+test-results/
+
+apps/backend/data
+docker-volume/
+release/
+release.tar.gz

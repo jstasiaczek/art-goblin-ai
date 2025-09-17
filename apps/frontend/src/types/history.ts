@@ -1,0 +1,22 @@
+export type HistoryEntry = {
+    id: number;
+    uuid: string;
+    create_date: string | number | Date;
+    prompt: string;
+    model: string;
+    width: number;
+    height: number;
+    image_name: string;
+    negative_prompt?: string;
+    n_images?: number;
+    num_steps?: number;
+    resolution?: string;
+    sampler_name?: string;
+    scale?: number;
+    image_data_url?: string;
+    kontext_max_mode?: boolean;
+    provider?: string;
+    response_format?: string;
+    seed?: number;
+    favorite?: boolean;
+};
