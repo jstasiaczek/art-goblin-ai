@@ -167,8 +167,8 @@ export const ImageForm = forwardRef<ImageFormHandle, Props>(({ projectUuid, onGe
             setResultBalance(remainingBalance);
             msgApi.success('Image generated');
             onGenerated?.();
-        } catch {
-            setError('Failed to generate image');
+        } catch (e: any) {
+            setError(e?.response?.data?.error || 'Failed to generate image');
         } finally {
             setSubmitting(false);
         }

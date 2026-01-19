@@ -11,10 +11,17 @@
     const sizeText = tds[2]?.innerText.split("\n")[0].trim();
     const price = tds[3]?.innerText.trim();
     const maxImages = tds[4]?.innerText.trim();
+    let width = null;
+    let height = null;
 
-    if (sizeText.indexOf("x") === -1) return;
+    if (sizeText.indexOf("x") !== -1) {
+      [width, height] = sizeText.split("x").map(v => parseInt(v.trim(), 10));
+    } else if (sizeText.indexOf("*") !== -1) {
+      [width, height] = sizeText.split("*").map(v => parseInt(v.trim(), 10));
+    } else {
+      return;
+    }
 
-    const [width, height] = sizeText.split("x").map(v => parseInt(v.trim(), 10));
 
     if (!models[id]) {
       models[id] = {

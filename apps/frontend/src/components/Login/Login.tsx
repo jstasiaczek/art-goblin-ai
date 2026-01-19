@@ -21,8 +21,8 @@ export const Login: React.FC = () => {
         setError(null);
         try {
             await login(values.email, values.password);
-        } catch {
-            setError('Failed to log in');
+        } catch (e: any) {
+            setError(e?.response?.data?.error || 'Failed to log in');
         } finally {
             setLoading(false);
         }

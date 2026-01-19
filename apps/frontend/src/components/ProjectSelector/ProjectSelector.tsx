@@ -33,8 +33,8 @@ export const ProjectSelector: React.FC<Props> = ({ onOpenProject, onOpenGroup, a
             setLoading(true);
             const res = await axios.get<ProjectSummaryGroup[]>('/api/projects/summary');
             setGroups(res.data || []);
-        } catch {
-            msgApi.error('Failed to load projects');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to load projects');
         } finally {
             setLoading(false);
         }
@@ -73,8 +73,8 @@ export const ProjectSelector: React.FC<Props> = ({ onOpenProject, onOpenGroup, a
             setIsCreateSceneModalOpen(false);
             setNewSceneName('');
             void load();
-        } catch {
-            msgApi.error('Failed to create scene');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to create scene');
         } finally {
             setCreatingScene(false);
         }
@@ -103,8 +103,8 @@ export const ProjectSelector: React.FC<Props> = ({ onOpenProject, onOpenGroup, a
             setIsCreateProjectModalOpen(false);
             setNewProjectName('');
             void load();
-        } catch {
-            msgApi.error('Failed to create project');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to create project');
         } finally {
             setCreatingProject(false);
         }

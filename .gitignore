@@ -43,3 +43,4 @@ apps/backend/data
 docker-volume/
 release/
 release.tar.gz
+CLAUDE.md

@@ -35,8 +35,8 @@ export const SnippetsModal: React.FC<SnippetsModalProps> = ({ open, onClose, onA
             const params = query ? { q: query } : {};
             const res = await axios.get<Snippet[]>('/api/snippets', { params });
             setSnippets(res.data || []);
-        } catch {
-            messageApi.error('Failed to load snippets');
+        } catch (e: any) {
+            messageApi.error(e?.response?.data?.error || 'Failed to load snippets');
         } finally {
             setLoading(false);
         }

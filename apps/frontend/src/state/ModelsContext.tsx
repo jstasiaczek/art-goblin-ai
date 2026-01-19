@@ -39,8 +39,8 @@ export const ModelsProvider: React.FC<React.PropsWithChildren> = ({ children }) 
             setError(null);
             const res = await axios.get<ModelInfo[]>('/api/models');
             setModels(res.data || []);
-        } catch {
-            setError('Failed to load models');
+        } catch (e: any) {
+            setError(e?.response?.data?.error || 'Failed to load models');
         } finally {
             setLoading(false);
         }

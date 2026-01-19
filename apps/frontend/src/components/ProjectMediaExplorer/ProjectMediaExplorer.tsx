@@ -63,8 +63,8 @@ export const ProjectMediaExplorer: React.FC<Props> = ({ projectUuid, onBack }) =
             } else {
                 setAllItems([]);
             }
-        } catch {
-            setError('Failed to load media');
+        } catch (e: any) {
+            setError(e?.response?.data?.error || 'Failed to load media');
         } finally {
             setLoading(false);
         }

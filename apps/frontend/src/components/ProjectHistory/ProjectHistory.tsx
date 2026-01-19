@@ -76,8 +76,8 @@ export const ProjectHistory: React.FC<Props> = ({ projectUuid, refreshKey, onRes
                 });
                 return next;
             });
-        } catch {
-            setError('Failed to load history');
+        } catch (e: any) {
+            setError(e?.response?.data?.error || 'Failed to load history');
         } finally {
             setLoading(false);
         }
@@ -119,8 +119,8 @@ export const ProjectHistory: React.FC<Props> = ({ projectUuid, refreshKey, onRes
             const res = await axios.get<ProjectWithGroupName[]>('/api/projects');
             const data = Array.isArray(res.data) ? res.data : [];
             setAvailableProjects(data);
-        } catch {
-            msgApi.error('Failed to load projects');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to load projects');
         } finally {
             setLoadingProjects(false);
         }

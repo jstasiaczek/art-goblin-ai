@@ -47,8 +47,8 @@ export const Projects: React.FC = () => {
             const res = await axios.get<ProjectGroup[]>('/api/project-groups', { params: { withProjects: 1 } });
             const data = res.data || [];
             setGroups(data);
-        } catch {
-            msgApi.error('Failed to load projects');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to load projects');
         } finally {
             setLoading(false);
         }
@@ -75,8 +75,8 @@ export const Projects: React.FC = () => {
             setGroups((prev) => prev.map((group) => group.uuid === selectedGroup.uuid ? { ...group, projects: [res.data, ...group.projects] } : group));
             setNewName('');
             msgApi.success('Project created');
-        } catch {
-            msgApi.error('Failed to create project');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to create project');
         } finally {
             setCreating(false);
         }
@@ -90,8 +90,8 @@ export const Projects: React.FC = () => {
                 projects: group.projects.filter((project) => project.uuid !== uuid),
             })));
             msgApi.success('Project deleted');
-        } catch {
-            msgApi.error('Failed to delete project');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to delete project');
         }
     };
 
@@ -126,8 +126,8 @@ export const Projects: React.FC = () => {
             setEditName('');
             setEditGroupUuid('');
             msgApi.success('Changes saved');
-        } catch {
-            msgApi.error('Failed to save changes');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to save changes');
         } finally {
             setSavingEdit(false);
         }
@@ -153,8 +153,8 @@ export const Projects: React.FC = () => {
             setSelectedGroupUuid(newGroup.uuid);
             setNewGroupName('');
             msgApi.success('Group created');
-        } catch {
-            msgApi.error('Failed to create group');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to create group');
         } finally {
             setCreatingGroup(false);
         }
@@ -179,8 +179,8 @@ export const Projects: React.FC = () => {
             setEditingGroupUuid(null);
             setGroupEditName('');
             msgApi.success('Group renamed');
-        } catch {
-            msgApi.error('Failed to rename group');
+        } catch (e: any) {
+            msgApi.error(e?.response?.data?.error || 'Failed to rename group');
         } finally {
             setSavingGroupEdit(false);
         }

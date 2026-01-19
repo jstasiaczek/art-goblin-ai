@@ -74,9 +74,9 @@ export const ProjectSpace: React.FC<Props> = ({ projectUuid, onBack, defaultGrou
                 if (!mounted) return;
                 setProject(res.data);
             })
-            .catch(() => {
+            .catch((e: any) => {
                 if (!mounted) return;
-                setError('Failed to load project');
+                setError(e?.response?.data?.error || 'Failed to load project');
             })
             .finally(() => {
                 if (!mounted) return;
