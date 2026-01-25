@@ -65,18 +65,13 @@ To run this project you need:
 
 3. Initialize the database:
    ```bash
-   pnpm --filter backend db:push
+   pnpm --filter backend db:migrate
    ```
 
-5. Launch both frontend and backend:
+4. Launch both frontend and backend:
    ```bash
    pnpm dev
    ```
-
-
-⚠️ Heads up: There are **no real database migrations**.  
-Running `db:push` just recreates the schema. If your schema changes, your data is probably toast.  
-This is fine™ for local dev, but **don't even think** about using this in production.
 
 ---
 
@@ -131,9 +126,48 @@ At the next startup, the setup wizard will be shown again so you can create a ne
 
 ---
 
+## 🗃️ Database Migrations
+
+This project uses [Drizzle ORM](https://orm.drizzle.team/) migrations to manage database schema changes.
+Migration files are stored in `apps/backend/drizzle/`.
+
+### Available commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm --filter backend db:generate` | Generate a new migration after changing schema |
+| `pnpm --filter backend db:migrate` | Apply pending migrations |
+| `pnpm --filter backend db:push` | Push schema directly (dev only, no history) |
+| `pnpm --filter backend db:baseline` | Mark initial migration as applied (for legacy DBs) |
+
+### Workflow for schema changes
+
+1. Modify the schema in `apps/backend/src/db/sqlite/schema.ts`
+2. Generate a migration:
+   ```bash
+   pnpm --filter backend db:generate
+   ```
+3. Review the generated SQL in `apps/backend/drizzle/`
+4. Apply the migration:
+   ```bash
+   pnpm --filter backend db:migrate
+   ```
+5. Commit the migration files to git
+
+### Docker deployments
+
+The Docker setup automatically handles migrations:
+- Detects legacy databases (created with `db:push`) and marks them as migrated
+- Applies any pending migrations on startup
+
+No manual intervention required.
+
+---
+
 ## 📓 Development Notes
 
-- `apps/backend/scripts/setup.ts` ensures the DB and image directory exist on startup.
+- `apps/backend/scripts/setup.ts` runs migrations and ensures the image directory exists on startup.
+- Database migrations are stored in `apps/backend/drizzle/` — commit these to git.
 - Static assets (like your frontend bundle) go into `apps/backend/public`.
 - No automated tests yet — **manual testing only**.
 - Clean structure: split API routes, image service, and auth logic into separate modules.
@@ -154,7 +188,7 @@ Don't treat it as production-ready infrastructure.
    ```
 
 3. Services:
-   - `setup`: prepares the DB and folders.
+   - `setup`: runs database migrations and prepares folders.
    - `app`: runs the Fastify server.
    - Default port: `8080 → 3000`
 

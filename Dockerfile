@@ -35,6 +35,7 @@ COPY --from=backend-builder /app/node_modules /app/node_modules
 COPY --from=backend-builder /app/apps/backend/package.json apps/backend/package.json
 COPY --from=backend-builder /app/apps/backend/src apps/backend/src
 COPY --from=backend-builder /app/apps/backend/drizzle.config.ts apps/backend/drizzle.config.ts
+COPY --from=backend-builder /app/apps/backend/drizzle apps/backend/drizzle
 COPY --from=backend-builder /app/apps/backend/scripts apps/backend/scripts
 COPY --from=backend-builder /app/apps/backend/src/models.json apps/backend/dist/src/
 
