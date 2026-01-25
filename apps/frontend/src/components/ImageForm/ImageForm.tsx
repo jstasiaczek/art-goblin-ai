@@ -187,13 +187,13 @@ export const ImageForm = forwardRef<ImageFormHandle, Props>(({ projectUuid, onGe
                         form={form}
                         layout="vertical"
                         onFinish={onFinish}
-                        initialValues={{ provider: 'api1', nImages: 1, num_steps: 20, scale: 7.5, kontext_max_mode: false }}
+                        initialValues={{ provider: 'api2', nImages: 1, num_steps: 20, scale: 7.5, kontext_max_mode: false }}
                     >
                         {/* Provider selection */}
                         <Form.Item name="provider" label="Provider">
                             <Radio.Group optionType="button" buttonStyle="solid">
-                                <Radio.Button value="api1">API-1</Radio.Button>
-                                <Radio.Button value="api2">API-2</Radio.Button>
+                                <Radio.Button value="api2">OpenAI compatible</Radio.Button>
+                                <Radio.Button value="api1" style={{ color: '#999', opacity: 0.6 }}>Legacy</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
                         <Form.Item label="Model" required>
