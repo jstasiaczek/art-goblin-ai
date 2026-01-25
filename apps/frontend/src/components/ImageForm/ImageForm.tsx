@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Form, Input, InputNumber, Select, Switch, Typography, Alert, Image, message, Row, Col, Empty, Card, Space, Spin, theme, Radio, Tooltip, Grid } from 'antd';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined, StarFilled, StarOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { forwardRef, useImperativeHandle } from 'react';
 import { useModels } from '../../state/ModelsContext';
@@ -37,7 +37,7 @@ export const ImageForm = forwardRef<ImageFormHandle, Props>(({ projectUuid, onGe
     const screens = Grid.useBreakpoint();
     const [form] = Form.useForm<FormValues>();
     const provider = Form.useWatch('provider', form) as 'api1' | 'api2' | undefined;
-    const { models, loading: modelsLoading, error: modelsError } = useModels();
+    const { models, loading: modelsLoading, error: modelsError, favoriteModelIds, toggleFavorite } = useModels();
     const [submitting, setSubmitting] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [msgApi, contextHolder] = message.useMessage();
@@ -200,11 +200,36 @@ export const ImageForm = forwardRef<ImageFormHandle, Props>(({ projectUuid, onGe
                             <Select
                                 loading={modelsLoading}
                                 placeholder="Select a model"
-                                options={models.map(m => ({ label: `${m.name} (${m.id})`, value: m.id }))}
+                                options={[...models]
+                                    .sort((a, b) => {
+                                        const aFav = favoriteModelIds.has(a.id) ? 1 : 0;
+                                        const bFav = favoriteModelIds.has(b.id) ? 1 : 0;
+                                        return bFav - aFav;
+                                    })
+                                    .map(m => ({
+                                        label: (
+                                            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                                <span>{m.name} ({m.id})</span>
+                                                <span
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
+                                                        toggleFavorite(m.id);
+                                                    }}
+                                                    onMouseDown={(e) => e.stopPropagation()}
+                                                    style={{ cursor: 'pointer', marginLeft: 8, color: favoriteModelIds.has(m.id) ? '#faad14' : '#d9d9d9' }}
+                                                >
+                                                    {favoriteModelIds.has(m.id) ? <StarFilled /> : <StarOutlined />}
+                                                </span>
+                                            </span>
+                                        ),
+                                        value: m.id,
+                                        searchLabel: `${m.name} (${m.id})`,
+                                    }))}
                                 value={selectedModelId}
                                 onChange={onChangeModel}
                                 showSearch
-                                optionFilterProp="label"
+                                optionFilterProp="searchLabel"
                             />
                         </Form.Item>
 

@@ -1,6 +1,8 @@
 import type { FastifyInstance } from 'fastify';
+import { eq, and } from 'drizzle-orm';
 import { db } from '../db/sqlite/client';
-import { modelsTable } from '../db/sqlite/schema';
+import { modelsTable, userFavoriteModelsTable } from '../db/sqlite/schema';
+import { getUserIdFromRequest } from '../utils/getUserId';
 
 type ModelSize = {
   width: number;
@@ -150,6 +152,74 @@ export default async function modelsRoutes(fastify: FastifyInstance) {
     } catch (err) {
       fastify.log.error(err);
       return reply.code(500).send({ error: 'Failed to import models' });
+    }
+  });
+
+  // Get user's favorite model IDs
+  fastify.get('/api/models/favorites', {
+    preHandler: async (request, reply) => {
+      await fastify.authenticate(request, reply);
+    },
+  }, async (request, reply) => {
+    try {
+      const userId = getUserIdFromRequest(request);
+      const rows = await db
+        .select({ modelId: userFavoriteModelsTable.modelId })
+        .from(userFavoriteModelsTable)
+        .where(eq(userFavoriteModelsTable.userId, userId));
+      return reply.send(rows.map((r) => r.modelId));
+    } catch (err) {
+      fastify.log.error(err);
+      return reply.code(500).send({ error: 'Failed to load favorite models' });
+    }
+  });
+
+  // Toggle favorite status for a model
+  fastify.patch('/api/models/:id/favorite', {
+    preHandler: async (request, reply) => {
+      await fastify.authenticate(request, reply);
+    },
+  }, async (request, reply) => {
+    try {
+      const userId = getUserIdFromRequest(request);
+      const modelId = (request.params as { id: string }).id;
+      const body = request.body as { favorite: boolean };
+
+      if (typeof body.favorite !== 'boolean') {
+        return reply.code(400).send({ error: 'Field "favorite" must be a boolean' });
+      }
+
+      if (body.favorite) {
+        // Check if already exists
+        const existing = await db
+          .select()
+          .from(userFavoriteModelsTable)
+          .where(and(
+            eq(userFavoriteModelsTable.userId, userId),
+            eq(userFavoriteModelsTable.modelId, modelId),
+          ))
+          .limit(1);
+
+        if (existing.length === 0) {
+          await db.insert(userFavoriteModelsTable).values({
+            userId,
+            modelId,
+            createdAt: Math.floor(Date.now() / 1000),
+          });
+        }
+      } else {
+        await db
+          .delete(userFavoriteModelsTable)
+          .where(and(
+            eq(userFavoriteModelsTable.userId, userId),
+            eq(userFavoriteModelsTable.modelId, modelId),
+          ));
+      }
+
+      return reply.send({ ok: true, favorite: body.favorite });
+    } catch (err) {
+      fastify.log.error(err);
+      return reply.code(500).send({ error: 'Failed to update favorite status' });
     }
   });
 }

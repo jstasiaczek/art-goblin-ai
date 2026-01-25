@@ -64,3 +64,10 @@ export const modelsTable = sqliteTable("models", {
   name: text().notNull(),
   sizes: text().notNull(),
 });
+
+export const userFavoriteModelsTable = sqliteTable("user_favorite_models", {
+  id: int().primaryKey({ autoIncrement: true }),
+  userId: int("user_id").notNull(),
+  modelId: text("model_id").notNull(),
+  createdAt: int("created_at").notNull(),
+});
